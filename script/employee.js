@@ -25,7 +25,7 @@ class Employee {
       }
       console.table(results);
       if (callback) {
-        callback()
+        callback();
       }
     });
   }
@@ -63,8 +63,7 @@ class Employee {
         console.error(err);
         callback(err, null);
       } else {
-        const managerNames = results.map((result) =>
-        result.manager_name);
+        const managerNames = results.map((result) => result.manager_name);
         callback(null, managerNames);
       }
     });
@@ -113,7 +112,6 @@ class Employee {
     });
   }
 
-
   addEmployee() {
     //write code
   }
@@ -123,41 +121,42 @@ class Employee {
   }
 
   deleteEmployee(selectedEmployee, callback) {
-    // Extract the first name and last name from the selectedEmployee string
-    const [firstName, lastName] = selectedEmployee.split(' ');
+    const [firstName, lastName] = selectedEmployee.split(" ");
 
-    // Find the employee ID based on the first name and last name
     const findEmployeeIdQuery = `
       SELECT id FROM employee WHERE first_name = ? AND last_name = ?;
     `;
 
-    db.query(findEmployeeIdQuery, [firstName, lastName], (findErr, findResults) => {
-      if (findErr) {
-        console.error("Error finding employee ID:", findErr);
-        callback(findErr);
-      } else {
-        if (findResults.length === 0) {
-          console.error("Employee not found.");
-          callback("Employee not found.");
+    db.query(
+      findEmployeeIdQuery,
+      [firstName, lastName],
+      (findErr, findResults) => {
+        if (findErr) {
+          console.error("Error finding employee ID:", findErr);
+          callback(findErr);
         } else {
-          const employeeId = findResults[0].id;
+          if (findResults.length === 0) {
+            console.error("Employee not found.");
+            callback("Employee not found.");
+          } else {
+            const employeeId = findResults[0].id;
 
-          // Delete the employee based on the found ID
-          const deleteQuery = `
+            const deleteQuery = `
             DELETE FROM employee WHERE id = ?;
           `;
 
-          db.query(deleteQuery, [employeeId], (deleteErr, deleteResults) => {
-            if (deleteErr) {
-              console.error("Error deleting employee:", deleteErr);
-              callback(deleteErr);
-            } else {
-              callback(null, deleteResults);
-            }
-          });
+            db.query(deleteQuery, [employeeId], (deleteErr, deleteResults) => {
+              if (deleteErr) {
+                console.error("Error deleting employee:", deleteErr);
+                callback(deleteErr);
+              } else {
+                callback(null, deleteResults);
+              }
+            });
+          }
         }
       }
-    });
+    );
   }
 }
 

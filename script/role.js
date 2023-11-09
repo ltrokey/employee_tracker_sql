@@ -20,7 +20,7 @@ class Role {
       }
       console.table(results);
       if (callback) {
-        callback()
+        callback();
       }
     });
   }
@@ -38,6 +38,4 @@ class Role {
   }
 }
 
-
-
-module.exports = Role
+module.exports = Role;

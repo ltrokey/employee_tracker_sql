@@ -94,7 +94,7 @@ function handleMenuChoice(answer) {
       // Delete Role logic
       break;
     case "Delete Employee":
-      deleteEmployeePrompt(department, employee,() => displayMenu());
+      deleteEmployeePrompt(department, employee, () => displayMenu());
       break;
     case "Quit":
       console.log("🙂 Goodbye!");
@@ -227,37 +227,44 @@ function handleMenuChoice(answer) {
           .then((departmentAnswers) => {
             const selectedDepartment = departmentAnswers.selectedDepartment;
 
-            employee.fetchEmployeesByDepartment(selectedDepartment, (err, employeeNames) => {
-              if (err) {
-                console.error("Error fetching employees:", err);
-                callback();
-              } else {
-                inquirer
-                  .prompt({
-                    type: "list",
-                    name: "selectedEmployee",
-                    message: "Select an employee to delete:",
-                    choices: employeeNames,
-                  })
-                  .then((employeeAnswers) => {
-                    const selectedEmployee = employeeAnswers.selectedEmployee;
+            employee.fetchEmployeesByDepartment(
+              selectedDepartment,
+              (err, employeeNames) => {
+                if (err) {
+                  console.error("Error fetching employees:", err);
+                  callback();
+                } else {
+                  inquirer
+                    .prompt({
+                      type: "list",
+                      name: "selectedEmployee",
+                      message: "Select an employee to delete:",
+                      choices: employeeNames,
+                    })
+                    .then((employeeAnswers) => {
+                      const selectedEmployee = employeeAnswers.selectedEmployee;
 
-                    employee.deleteEmployee(selectedEmployee, (err, results) => {
-                      if (err) {
-                        console.error("Error deleting employee:", err);
-                      } else {
-                        console.log(`Employee '${selectedEmployee}' successfully deleted.`);
-                      }
-                      callback();
+                      employee.deleteEmployee(
+                        selectedEmployee,
+                        (err, results) => {
+                          if (err) {
+                            console.error("Error deleting employee:", err);
+                          } else {
+                            console.log(
+                              `Employee '${selectedEmployee}' successfully deleted.`
+                            );
+                          }
+                          callback();
+                        }
+                      );
                     });
-                  });
+                }
               }
-            });
+            );
           });
       }
     });
   }
-
 }
 
 startApplication();
