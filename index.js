@@ -43,6 +43,7 @@ function displayMenu() {
           "View Budget of All Departments",
           "Add a Department",
           "Add a Role",
+          "Add an Employee",
           "Update an Employee Role",
           "Update Employee Manager",
           "Delete Department",
@@ -80,6 +81,9 @@ function handleMenuChoice(answer) {
       break;
     case "Add a Role":
       // Add Role logic
+      break;
+    case "Add an Employee":
+      addEmployeePrompt(department, employee, role, () => displayMenu());
       break;
     case "Update an Employee Role":
       // Update Role logic
@@ -265,6 +269,94 @@ function handleMenuChoice(answer) {
       }
     });
   }
+
+  function addEmployeePrompt(department, employee, role, callback) {
+    // Fetch all departments, managers, and roles
+    department.fetchAllDepartments((err, departments) => {
+      if (err) {
+        console.error("Error fetching departments:", err);
+        callback();
+      } else {
+        employee.fetchAllManagers((err, managers) => {
+          if (err) {
+            console.error("Error fetching managers:", err);
+            callback();
+          } else {
+            role.fetchAllRoles((err, roles) => {
+              if (err) {
+                console.error("Error fetching roles:", err);
+                callback();
+              } else {
+                inquirer
+                  .prompt([
+                    {
+                      type: "input",
+                      name: "firstName",
+                      message: "Enter the first name of the new employee:",
+                    },
+                    {
+                      type: "input",
+                      name: "lastName",
+                      message: "Enter the last name of the new employee:",
+                    },
+                    {
+                      type: "list",
+                      name: "selectedRole",
+                      message: "Select a role for the new employee:",
+                      choices: roles.map((role) => role.title),
+                    },
+                    {
+                      type: "list",
+                      name: "selectedManager",
+                      message: "Select a manager for the new employee:",
+                      choices: managers.map(
+                        (manager) =>
+                          manager.first_name + " " + manager.last_name
+                      ),
+                    },
+                  ])
+                  .then((answers) => {
+                    const {
+                      firstName,
+                      lastName,
+                      selectedRole,
+                      selectedManager,
+                    } = answers;
+
+                    const selectedDepartment = roles.find(
+                      (role) => role.title === selectedRole
+                    ).department_name;
+
+                    // Combine information and log
+                    const employeeInfo = {
+                      firstName,
+                      lastName,
+                      role: selectedRole,
+                      manager: selectedManager,
+                    };
+
+                    console.log("New employee information:", employeeInfo);
+
+                    // Call the addEmployee method with the gathered information
+                    employee.addEmployee(employeeInfo, (err, results) => {
+                      if (err) {
+                        console.error("Error adding employee:", err);
+                      } else {
+                        console.log("Employee added successfully.");
+                      }
+
+                      // Call back
+                      callback();
+                    });
+                  });
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
 }
 
 startApplication();

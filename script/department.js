@@ -23,6 +23,18 @@ class Department {
     });
   }
 
+  fetchAllDepartments(callback) {
+    const query = "SELECT * FROM department";
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error(err);
+        callback(err, null);
+      } else {
+        callback(null, results);
+      }
+    });
+  }
+
   fetchDepartments(callback) {
     const query = "SELECT department_name FROM department";
     db.query(query, (err, results) => {
@@ -58,7 +70,7 @@ class Department {
     });
   }
 
-  addDepartment(newDepartmentName, callback) {
+  addDepartments(newDepartmentName, callback) {
     const query = "INSERT INTO department (department_name) VALUES (?);";
     db.query(query, [newDepartmentName], (err, results) => {
       if (err) {

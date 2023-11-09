@@ -25,6 +25,18 @@ class Role {
     });
   }
 
+  fetchAllRoles(callback) {
+    const query = "SELECT * FROM role";
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error(err);
+        callback(err, null);
+      } else {
+        callback(null, results);
+      }
+    });
+  }
+
   addRole() {
     // write code
   }

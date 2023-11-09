@@ -54,6 +54,18 @@ class Employee {
     });
   }
 
+  fetchAllManagers(callback) {
+    const query = "SELECT * FROM employee WHERE manager_id IS NULL";
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error(err);
+        callback(err, null);
+      } else {
+        callback(null, results);
+      }
+    });
+  }
+
   fetchManagers(callback) {
     const query = `SELECT CONCAT(first_name, ' ', last_name)
                   AS manager_name FROM employee
@@ -112,8 +124,65 @@ class Employee {
     });
   }
 
-  addEmployee() {
-    //write code
+  addEmployee(employeeInfo, callback) {
+    const {
+      firstName,
+      lastName,
+      role,
+      manager,
+    } = employeeInfo;
+
+    // Fetch the role ID based on the selected role title
+    const findRoleIdQuery = `
+      SELECT id FROM role WHERE title = ?;
+    `;
+
+    db.query(findRoleIdQuery, [role], (findRoleErr, findRoleResults) => {
+      if (findRoleErr) {
+        console.error("Error finding role ID:", findRoleErr);
+        callback(findRoleErr);
+      } else {
+        if (findRoleResults.length === 0) {
+          console.error("Role not found.");
+          callback("Role not found.");
+        } else {
+          const roleId = findRoleResults[0].id;
+
+          // Fetch the manager ID based on the selected manager name
+          const findManagerIdQuery = `
+            SELECT id FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?;
+          `;
+
+          db.query(findManagerIdQuery, [manager], (findManagerErr, findManagerResults) => {
+            if (findManagerErr) {
+              console.error("Error finding manager ID:", findManagerErr);
+              callback(findManagerErr);
+            } else {
+              const managerId = findManagerResults.length > 0 ? findManagerResults[0].id : null;
+
+              // Insert the new employee into the database
+              const insertEmployeeQuery = `
+                INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                VALUES (?, ?, ?, ?);
+              `;
+
+              db.query(
+                insertEmployeeQuery,
+                [firstName, lastName, roleId, managerId],
+                (insertErr, insertResults) => {
+                  if (insertErr) {
+                    console.error("Error adding employee:", insertErr);
+                    callback(insertErr);
+                  } else {
+                    callback(null, insertResults);
+                  }
+                }
+              );
+            }
+          });
+        }
+      }
+    });
   }
 
   updateEmployeeManager() {
