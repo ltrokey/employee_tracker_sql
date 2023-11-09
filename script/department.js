@@ -82,7 +82,6 @@ class Department {
   }
 
   deleteDepartment(departmentName, callback) {
-    // Look up the department ID from the department name
     const findDepartmentId =
       "SELECT id FROM department WHERE department_name = ?";
     db.query(
@@ -93,10 +92,8 @@ class Department {
           console.error(findDepartmentIdErr);
           callback(findDepartmentIdErr);
         } else {
-          // Extract the department ID
           const departmentId = findDepartmentIdResults[0].id;
 
-          // Use the departmentId to delete the department
           const deleteQuery = "DELETE FROM department WHERE id = ?";
           db.query(deleteQuery, [departmentId], (deleteErr, deleteResults) => {
             if (deleteErr) {
