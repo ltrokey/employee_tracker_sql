@@ -3,14 +3,11 @@ const inquirer = require("inquirer");
 // Connection to mysql2
 const db = require("./db/database");
 
-const {
-  viewAllDepartments,
-  viewBudgetOfAllDepartments,
-} = require("./script/department");
+const Department = require("./script/department");
 
 const Employee = require("./script/employee");
 
-const viewAllRoles = require("./script/role");
+const Role = require("./script/role");
 
 // Function to display a welcome message
 function displayWelcomeMessage() {
@@ -31,7 +28,9 @@ function displayWelcomeMessage() {
 function startApplication() {
   displayWelcomeMessage();
 
+  const department = new Department();
   const employee = new Employee();
+  const role = new Role();
 
   inquirer
     .prompt([
@@ -62,6 +61,7 @@ function startApplication() {
         case "View All Employees":
           employee.viewAll();
           break;
+
         case "View Employees by Department":
           // Fetch department names and display the prompt
           employee.fetchDepartments((err, departmentNames) => {
@@ -96,6 +96,7 @@ function startApplication() {
             }
           });
           break;
+
         case "View Employees by Manager":
           // Fetch managers names and display the prompt
           employee.fetchManagers((err, managerNames) => {
@@ -113,32 +114,33 @@ function startApplication() {
                   const selectedManager = managerAnswer.manager;
 
                   // Fetch and display employees for the selected manager
-                  employee.viewByManager(
-                    selectedManager,
-                    (err, employees) => {
-                      if (err) {
-                        console.error(
-                          "Error fetching employees by manager:",
-                          err
-                        )
-                      } else {
-                        console.table(employees)
-                      }
+                  employee.viewByManager(selectedManager, (err, employees) => {
+                    if (err) {
+                      console.error(
+                        "Error fetching employees by manager:",
+                        err
+                      );
+                    } else {
+                      console.table(employees);
                     }
-                  )
+                  });
                 });
             }
           });
           break;
+
         case "View All Departments":
-          viewAllDepartments();
+          department.viewAll();
           break;
+
         case "View All Roles":
-          viewAllRoles();
+          role.viewAll();
           break;
+
         case "View Budget of All Departments":
-          viewBudgetOfAllDepartments();
+          department.viewBudget();
           break;
+
         case "Quit":
           console.log("🙂 Goodbye!");
           db.close();

@@ -21,7 +21,7 @@ CREATE TABLE role (
     salary DECIMAL(10, 2) DEFAULT 0.00 CHECK (salary >= 0),
     department_id INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (department_id) REFERENCES department(id),
+    FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL,
     INDEX (department_id)
 );
 

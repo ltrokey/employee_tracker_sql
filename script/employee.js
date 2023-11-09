@@ -28,6 +28,7 @@ class Employee {
       console.table(results);
     });
   }
+
   fetchDepartments(callback) {
     const query = "SELECT department_name FROM department";
     db.query(query, (err, results) => {
@@ -40,6 +41,7 @@ class Employee {
       }
     });
   }
+
   viewByDepartment(selectedDepartment, callback) {
     const query = `
       SELECT
@@ -63,6 +65,7 @@ class Employee {
       }
     });
   }
+
   fetchManagers(callback) {
     const query = `SELECT CONCAT(first_name, ' ', last_name)
                   AS manager_name FROM employee
@@ -78,6 +81,7 @@ class Employee {
       }
     });
   }
+
   viewByManager(selectedManager, callback) {
     const query = `
       SELECT
@@ -99,6 +103,18 @@ class Employee {
         callback(null, results);
       }
     });
+  }
+
+  addEmployee() {
+    //write code
+  }
+
+  updateEmployeeManager() {
+    //write code
+  }
+
+  deleteEmployee() {
+    //write code
   }
 }
 
