@@ -23,6 +23,27 @@ class Department {
     });
   }
 
+  fetchDepartmentIdByName(departmentName, callback) {
+    const findDepartmentIdQuery = `
+      SELECT id FROM department WHERE department_name = ?;
+    `;
+
+    db.query(findDepartmentIdQuery, [departmentName], (err, results) => {
+      if (err) {
+        console.error("Error fetching department ID:", err);
+        callback(err, null);
+      } else {
+        if (results.length === 0) {
+          console.error("Department not found.");
+          callback("Department not found.", null);
+        } else {
+          const departmentId = results[0].id;
+          callback(null, departmentId);
+        }
+      }
+    });
+  }
+
   fetchAllDepartments(callback) {
     const query = "SELECT * FROM department";
     db.query(query, (err, results) => {

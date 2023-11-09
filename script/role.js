@@ -37,10 +37,20 @@ class Role {
     });
   }
 
-  addRole() {
-    // write code
-  }
+  addRole({ title, salary, departmentId }, callback) {
+    const addRoleQuery =
+      "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)";
+    const values = [title, salary, departmentId];
 
+    db.query(addRoleQuery, values, (err, results) => {
+      if (err) {
+        console.error("Error adding role:", err);
+        callback(err);
+      } else {
+        callback(null, results);
+      }
+    });
+  }
   updateRole() {
     // write code
   }
