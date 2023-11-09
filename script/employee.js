@@ -1,11 +1,9 @@
 const db = require("../db/database");
 
-// Function to view all employees
-
 class Employee {
   constructor() {}
 
-  viewAll() {
+  viewAll(callback) {
     const query = `
     SELECT
         e.id AS "Employee ID",
@@ -26,18 +24,8 @@ class Employee {
         return;
       }
       console.table(results);
-    });
-  }
-
-  fetchDepartments(callback) {
-    const query = "SELECT department_name FROM department";
-    db.query(query, (err, results) => {
-      if (err) {
-        console.error(err);
-        callback(err, null);
-      } else {
-        const departmentNames = results.map((result) => result.department_name);
-        callback(null, departmentNames);
+      if (callback) {
+        callback()
       }
     });
   }

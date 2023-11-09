@@ -3,7 +3,7 @@ const db = require("../db/database");
 class Role {
   constructor() {}
 
-  viewAll() {
+  viewAll(callback) {
     const query = `
     SELECT
         r.id AS "Title ID",
@@ -19,6 +19,9 @@ class Role {
         return;
       }
       console.table(results);
+      if (callback) {
+        callback()
+      }
     });
   }
 
