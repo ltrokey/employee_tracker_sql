@@ -93,6 +93,27 @@ class Employee {
     });
   }
 
+  fetchEmployeesByDepartment(departmentName, callback) {
+    const query = `
+      SELECT CONCAT(first_name, ' ', last_name) AS fullName
+      FROM employee
+      JOIN role ON employee.role_id = role.id
+      JOIN department ON role.department_id = department.id
+      WHERE department.department_name = ?;
+    `;
+
+    db.query(query, [departmentName], (err, results) => {
+      if (err) {
+        console.error(err);
+        callback(err, null);
+      } else {
+        const employeeNames = results.map((employee) => employee.fullName);
+        callback(null, employeeNames);
+      }
+    });
+  }
+
+
   addEmployee() {
     //write code
   }
@@ -101,8 +122,42 @@ class Employee {
     //write code
   }
 
-  deleteEmployee() {
-    //write code
+  deleteEmployee(selectedEmployee, callback) {
+    // Extract the first name and last name from the selectedEmployee string
+    const [firstName, lastName] = selectedEmployee.split(' ');
+
+    // Find the employee ID based on the first name and last name
+    const findEmployeeIdQuery = `
+      SELECT id FROM employee WHERE first_name = ? AND last_name = ?;
+    `;
+
+    db.query(findEmployeeIdQuery, [firstName, lastName], (findErr, findResults) => {
+      if (findErr) {
+        console.error("Error finding employee ID:", findErr);
+        callback(findErr);
+      } else {
+        if (findResults.length === 0) {
+          console.error("Employee not found.");
+          callback("Employee not found.");
+        } else {
+          const employeeId = findResults[0].id;
+
+          // Delete the employee based on the found ID
+          const deleteQuery = `
+            DELETE FROM employee WHERE id = ?;
+          `;
+
+          db.query(deleteQuery, [employeeId], (deleteErr, deleteResults) => {
+            if (deleteErr) {
+              console.error("Error deleting employee:", deleteErr);
+              callback(deleteErr);
+            } else {
+              callback(null, deleteResults);
+            }
+          });
+        }
+      }
+    });
   }
 }
 

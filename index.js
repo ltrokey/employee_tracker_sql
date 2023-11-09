@@ -4,7 +4,6 @@ const Department = require("./script/department");
 const Employee = require("./script/employee");
 const Role = require("./script/role");
 
-// Create instances of your classes
 const department = new Department();
 const employee = new Employee();
 const role = new Role();
@@ -25,7 +24,7 @@ function displayWelcomeMessage() {
 
 function startApplication() {
   displayWelcomeMessage();
-  displayMenu()
+  displayMenu();
 }
 
 function displayMenu() {
@@ -95,7 +94,7 @@ function handleMenuChoice(answer) {
       // Delete Role logic
       break;
     case "Delete Employee":
-      // Delete Employee logic
+      deleteEmployeePrompt(department, employee,() => displayMenu());
       break;
     case "Quit":
       console.log("🙂 Goodbye!");
@@ -124,7 +123,7 @@ function handleMenuChoice(answer) {
               } else {
                 console.table(employees);
                 if (callback) {
-                  callback()
+                  callback();
                 }
               }
             });
@@ -155,7 +154,7 @@ function handleMenuChoice(answer) {
               } else {
                 console.table(employees);
                 if (callback) {
-                  callback()
+                  callback();
                 }
               }
             });
@@ -211,6 +210,54 @@ function handleMenuChoice(answer) {
       }
     });
   }
+
+  function deleteEmployeePrompt(department, employee, callback) {
+    department.fetchDepartments((err, departmentNames) => {
+      if (err) {
+        console.error("Error fetching departments:", err);
+        callback();
+      } else {
+        inquirer
+          .prompt({
+            type: "list",
+            name: "selectedDepartment",
+            message: "Select a department to view employees:",
+            choices: departmentNames,
+          })
+          .then((departmentAnswers) => {
+            const selectedDepartment = departmentAnswers.selectedDepartment;
+
+            employee.fetchEmployeesByDepartment(selectedDepartment, (err, employeeNames) => {
+              if (err) {
+                console.error("Error fetching employees:", err);
+                callback();
+              } else {
+                inquirer
+                  .prompt({
+                    type: "list",
+                    name: "selectedEmployee",
+                    message: "Select an employee to delete:",
+                    choices: employeeNames,
+                  })
+                  .then((employeeAnswers) => {
+                    const selectedEmployee = employeeAnswers.selectedEmployee;
+
+                    employee.deleteEmployee(selectedEmployee, (err, results) => {
+                      if (err) {
+                        console.error("Error deleting employee:", err);
+                      } else {
+                        console.log(`Employee '${selectedEmployee}' successfully deleted.`);
+                      }
+                      callback();
+                    });
+                  });
+              }
+            });
+          });
+      }
+    });
+  }
+
 }
 
 startApplication();
