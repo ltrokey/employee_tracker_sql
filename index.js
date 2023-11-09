@@ -60,9 +60,10 @@ function startApplication() {
     .then((answer) => {
       switch (answer.dashboard) {
         case "View All Employees":
-          employee.viewAll()
+          employee.viewAll();
           break;
         case "View Employees by Department":
+          // Fetch department names and display the prompt
           employee.fetchDepartments((err, departmentNames) => {
             if (err) {
               console.error("Error fetching departments:", err);
@@ -76,22 +77,58 @@ function startApplication() {
                 })
                 .then((departmentAnswers) => {
                   const selectedDepartment = departmentAnswers.department;
-                  // Use selectedDepartment for further processing
+
+                  // Fetch and display employees for the selected department
+                  employee.viewByDepartment(
+                    selectedDepartment,
+                    (err, employees) => {
+                      if (err) {
+                        console.error(
+                          "Error fetching employees by department:",
+                          err
+                        );
+                      } else {
+                        console.table(employees);
+                      }
+                    }
+                  );
                 });
             }
           });
           break;
         case "View Employees by Manager":
-          inquirer
-            .prompt({
-              type: "list",
-              name: "manager",
-              message: "Select a manager:",
-              choices: managerNames,
-            })
-            .then((managerAnswer) => {
-              const selectedManager = managerAnswer.manager;
-            });
+          // Fetch managers names and display the prompt
+          employee.fetchManagers((err, managerNames) => {
+            if (err) {
+              console.error("Error fetching managers:", err);
+            } else {
+              inquirer
+                .prompt({
+                  type: "list",
+                  name: "manager",
+                  message: "Select a manager:",
+                  choices: managerNames,
+                })
+                .then((managerAnswer) => {
+                  const selectedManager = managerAnswer.manager;
+
+                  // Fetch and display employees for the selected manager
+                  employee.viewByManager(
+                    selectedManager,
+                    (err, employees) => {
+                      if (err) {
+                        console.error(
+                          "Error fetching employees by manager:",
+                          err
+                        )
+                      } else {
+                        console.table(employees)
+                      }
+                    }
+                  )
+                });
+            }
+          });
           break;
         case "View All Departments":
           viewAllDepartments();
