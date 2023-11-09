@@ -86,7 +86,7 @@ function handleMenuChoice(answer) {
       addEmployeePrompt(department, employee, role, () => displayMenu());
       break;
     case "Update an Employee Role":
-      // Update Role logic
+      updateEmployeeRolePrompt(employee, role, () => displayMenu());
       break;
     case "Update Employee Manager":
       updateEmployeeManagerPrompt(employee, () => displayMenu());
@@ -420,7 +420,9 @@ function handleMenuChoice(answer) {
               message: "Enter the salary for the new role:",
               validate: (input) => {
                 const isValid = !isNaN(parseFloat(input)) && isFinite(input);
-                return isValid ? true : "Please enter a valid number for salary.";
+                return isValid
+                  ? true
+                  : "Please enter a valid number for salary.";
               },
             },
             {
@@ -437,17 +439,23 @@ function handleMenuChoice(answer) {
               selectedDepartment,
               (departmentIdErr, departmentId) => {
                 if (departmentIdErr) {
-                  console.error("Error fetching department ID:", departmentIdErr);
+                  console.error(
+                    "Error fetching department ID:",
+                    departmentIdErr
+                  );
                   callback();
                 } else {
-                  role.addRole({ title, salary, departmentId }, (addRoleErr) => {
-                    if (addRoleErr) {
-                      console.error("Error adding role:", addRoleErr);
-                    } else {
-                      console.log("Role added successfully.");
+                  role.addRole(
+                    { title, salary, departmentId },
+                    (addRoleErr) => {
+                      if (addRoleErr) {
+                        console.error("Error adding role:", addRoleErr);
+                      } else {
+                        console.log("Role added successfully.");
+                      }
+                      callback();
                     }
-                    callback();
-                  });
+                  );
                 }
               }
             );
@@ -455,8 +463,75 @@ function handleMenuChoice(answer) {
       }
     });
   }
+
+  function updateEmployeeRolePrompt(employee, role, callback) {
+    employee.fetchAllEmployees((err, employeeNames) => {
+      if (err) {
+        console.error("Error fetching employees:", err);
+        callback();
+      } else {
+        role.fetchAllRoles((roleErr, roles) => {
+          if (roleErr) {
+            console.error("Error fetching roles:", roleErr);
+            callback();
+          } else {
+            inquirer
+              .prompt([
+                {
+                  type: "list",
+                  name: "selectedEmployee",
+                  message: "Select an employee to update role:",
+                  choices: employeeNames,
+                },
+                {
+                  type: "list",
+                  name: "selectedRole",
+                  message: "Select a new role for the employee:",
+                  choices: roles.map((role) => role.title),
+                },
+              ])
+              .then((answers) => {
+                const selectedEmployee = answers.selectedEmployee;
+                const selectedRole = answers.selectedRole;
+
+                role.fetchRoleByTitle(
+                  selectedRole,
+                  (roleFetchErr, roleDetails) => {
+                    if (roleFetchErr) {
+                      console.error(
+                        "Error fetching role details:",
+                        roleFetchErr
+                      );
+                      callback();
+                    } else {
+                      const roleId = roleDetails.id;
+
+                      role.updateEmployeeRole(
+                        selectedEmployee,
+                        roleId,
+                        (updateErr, updateResults) => {
+                          if (updateErr) {
+                            console.error(
+                              "Error updating employee role:",
+                              updateErr
+                            );
+                          } else {
+                            console.log(
+                              "Employee role updated successfully."
+                            );
+                          }
+                          callback();
+                        }
+                      );
+                    }
+                  }
+                );
+              });
+          }
+        });
+      }
+    });
+  }
 }
-
-
 
 startApplication();

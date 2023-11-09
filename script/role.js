@@ -51,8 +51,35 @@ class Role {
       }
     });
   }
-  updateRole() {
-    // write code
+
+  fetchRoleByTitle(title, callback) {
+    const query = "SELECT * FROM role WHERE title = ?";
+    db.query(query, [title], (err, results) => {
+      if (err) {
+        console.error("Error fetching role by title:", err);
+        callback(err, null);
+      } else {
+        if (results.length === 0) {
+          console.error("Role not found.");
+          callback("Role not found.", null);
+        } else {
+          const roleDetails = results[0];
+          callback(null, roleDetails);
+        }
+      }
+    });
+  }
+
+  updateEmployeeRole(employeeName, roleId, callback) {
+    const updateQuery = "UPDATE employee SET role_id = ? WHERE CONCAT(first_name, ' ', last_name) = ?";
+    db.query(updateQuery, [roleId, employeeName], (updateErr, updateResults) => {
+      if (updateErr) {
+        console.error("Error updating employee role:", updateErr);
+        callback(updateErr);
+      } else {
+        callback(null, updateResults);
+      }
+    });
   }
 
   deleteRole() {
