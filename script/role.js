@@ -7,8 +7,8 @@ class Role {
     const query = `
     SELECT
         r.id AS "Title ID",
-        d.department_name AS "Department",
         r.title AS "Title",
+        d.department_name AS "Department",
         CONCAT('$', FORMAT(r.salary, 2)) AS "Salary"
     FROM role AS r
     LEFT JOIN department AS d ON r.department_id = d.id;
@@ -82,8 +82,16 @@ class Role {
     });
   }
 
-  deleteRole() {
-    // write code
+  deleteRole(roleTitle, callback) {
+    const deleteQuery = "DELETE FROM role WHERE title = ?";
+    db.query(deleteQuery, [roleTitle], (deleteErr, deleteResults) => {
+      if (deleteErr) {
+        console.error("Error deleting role:", deleteErr);
+        callback(deleteErr);
+      } else {
+        callback(null, deleteResults);
+      }
+    });
   }
 }
 

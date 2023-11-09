@@ -121,9 +121,6 @@ class Department {
               console.error(deleteErr);
               callback(deleteErr);
             } else {
-              console.log(
-                `Department '${departmentName}' successfully deleted.`
-              );
               callback(null, deleteResults);
             }
           });
