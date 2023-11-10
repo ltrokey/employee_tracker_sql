@@ -1,4 +1,4 @@
-const db = require("../db/database");
+const db = require("../config/connection");
 
 class Department {
   constructor() {}

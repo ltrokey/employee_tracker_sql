@@ -1,4 +1,4 @@
-const db = require("../db/database");
+const db = require("../config/connection");
 
 class Role {
   constructor() {}
@@ -71,15 +71,20 @@ class Role {
   }
 
   updateEmployeeRole(employeeName, roleId, callback) {
-    const updateQuery = "UPDATE employee SET role_id = ? WHERE CONCAT(first_name, ' ', last_name) = ?";
-    db.query(updateQuery, [roleId, employeeName], (updateErr, updateResults) => {
-      if (updateErr) {
-        console.error("Error updating employee role:", updateErr);
-        callback(updateErr);
-      } else {
-        callback(null, updateResults);
+    const updateQuery =
+      "UPDATE employee SET role_id = ? WHERE CONCAT(first_name, ' ', last_name) = ?";
+    db.query(
+      updateQuery,
+      [roleId, employeeName],
+      (updateErr, updateResults) => {
+        if (updateErr) {
+          console.error("Error updating employee role:", updateErr);
+          callback(updateErr);
+        } else {
+          callback(null, updateResults);
+        }
       }
-    });
+    );
   }
 
   deleteRole(roleTitle, callback) {
