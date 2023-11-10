@@ -22,7 +22,7 @@ function deleteDepartmentPrompt(department, callback) {
                 department.viewAll(callback);
                 console.log(`
 
-                Department '${departmentName}' successfully deleted.
+                Department successfully deleted.
 
                 `
                 );

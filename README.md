@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Link to live deploy](add url here)
+[Link to video presentation](https://drive.google.com/file/d/1VCjXRG1KMkOjtnAXNE8ggArvGgP9N80_/view)
 
 ## Description
 This employee management system is a command-line application designed to assist business owners in organizing and planning their companies by efficiently managing departments, roles, and employees. It provides a user-friendly interface that allows for easy viewing and manipulation of essential company data.
