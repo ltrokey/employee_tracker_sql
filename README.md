@@ -69,8 +69,6 @@ This employee management system is a command-line application designed to assist
     - To exit the application, select the "Quit" option from the main menu.0
 
 
-![alt text](assets/images/screenshot.png)
-
 ## Badges
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
